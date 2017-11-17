@@ -1,0 +1,5 @@
+Hello World: Witaj świecie
+# '{1}There is %d apple|{2,_}There is %s apples': '{1}Tutaj jest %d jabłko|{2,_}Tutaj jest %d jabłek'
+# apples:
+#   - '{1}There is %d apple': '{1}Tutaj jest %d jabłko'
+#   - '{2,_}There is %s apples': '{2,_}Tutaj jest %d jabłek'
