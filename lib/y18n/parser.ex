@@ -19,8 +19,8 @@ defmodule Orisons.Y18N.Parser do
       |> Enum.reduce([], fn(item, acc) ->
         try do
           file_name = Path.basename(item, ".yaml") |> String.to_atom
-          file = :yamerl_constr.file(item)
-          |> Enum.at(0)
+          file = YamlElixir.read_from_file(item)
+          |> IO.inspect()
           Keyword.put(acc, file_name, file)
         catch
           x -> 

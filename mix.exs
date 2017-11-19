@@ -15,14 +15,14 @@ defmodule Orisons.Y18N.Mixfile do
   def application do
     [
       mod: {Orisons.Y18N.App, []},
-      extra_applications: [:logger, :yamerl]
+      extra_applications: [:logger, :yaml_elixir]
     ]
   end
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:yamerl, "~> 0.5.0"}
+      {:yaml_elixir, "~> 1.3"}
     ]
   end
 end
