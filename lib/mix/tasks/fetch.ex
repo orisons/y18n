@@ -1,8 +1,9 @@
-defmodule Mix.Tasks.Y18N.CreateYAML do
+defmodule Mix.Tasks.Y18N.Fetch do
   use Mix.Task
 
-  # Mix.Task.run("Y18N.CreateYAML", ["priv/templates/**/*.eex"])
+  # Mix.Task.run("Y18N.Fetch", ["priv/templates/**/*.eex"])
 
+  # @spec run(args) :: boolean()
   def run(args) do
     options = OptionParser.parse(args, switches: [lang: :string])
 
@@ -38,8 +39,8 @@ defmodule Mix.Tasks.Y18N.CreateYAML do
   end
 
   defp merge(lang, strings) do
-    :application.start(:yamerl)
-    :application.start(:yaml_elixir)
+    :application.ensure_started(:yamerl)
+    :application.ensure_started(:yaml_elixir)
 
     path = Path.expand("priv/y18n/#{lang}.yaml")
     current_strings = YamlElixir.read_from_file(path)
