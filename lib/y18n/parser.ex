@@ -3,6 +3,7 @@ defmodule Orisons.Y18N.Parser do
 
   @ets_name :orisons_y18n_parser
   @session_name :orisons_y18n_session
+  # :ets.match(:orisons_y18n_parser, {:pl, %{"Hello World" => :"$2"}})
 
   def start_link(state) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
@@ -20,7 +21,6 @@ defmodule Orisons.Y18N.Parser do
         try do
           file_name = Path.basename(item, ".yaml") |> String.to_atom
           file = YamlElixir.read_from_file(item)
-          |> IO.inspect()
           Keyword.put(acc, file_name, file)
         catch
           x -> 
@@ -38,19 +38,14 @@ defmodule Orisons.Y18N.Parser do
             acc
         end
       end)
-      |> Enum.reduce([], fn({lang, items}, acc) ->
-        translations = Enum.map(items, fn {k, v} -> {String.Chars.to_string(k), String.Chars.to_string(v)} end) |> Map.new
-        [{lang, translations} | acc]
-      end)
   end
 
   def get_translation(string), do: get_translation(string, get_language)
   def get_translation(string, lang) do
     case :ets.match(@ets_name, {lang, %{string => :"$2"}}) do
-      [[translated]] -> translated
+      [[translated]] when is_binary(translated) and byte_size(translated) > 0 -> translated
       _ -> string
     end
-    |> IO.inspect()
   end
 
   def get_language, do: Application.get_env(:y18n, :language)
