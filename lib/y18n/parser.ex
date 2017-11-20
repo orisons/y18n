@@ -1,6 +1,10 @@
 defmodule Orisons.Y18N.Parser do
   use GenServer
 
+  defmodule PlugException do
+    defexception message: "Module 'Plug.Conn' is not available, check 'plug' is in deps."
+  end
+
   @ets_name :orisons_y18n_parser
   @session_name :orisons_y18n_session
   # :ets.match(:orisons_y18n_parser, {:pl, %{"Hello World" => :"$2"}})
@@ -50,10 +54,15 @@ defmodule Orisons.Y18N.Parser do
 
   def get_language, do: Application.get_env(:y18n, :language)
   def get_language(conn) do
-    case Plug.Conn.get_session(conn, @session_name) do
-      nil -> Application.get_env(:y18n, :language)
-      lang -> lang
+    case Code.ensure_loaded(Plug.Conn) do
+      {:module, Plug.Conn} ->
+        case Plug.Conn.get_session(conn, @session_name) do
+          nil -> Application.get_env(:y18n, :language)
+          lang -> lang
+        end
+      {:error, :nofile} -> raise PlugException
     end
+    
   end
 
   def handle_call(:reload_translations, _, message) do
