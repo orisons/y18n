@@ -25,9 +25,10 @@ defmodule Orisons.Y18N.Parser do
         try do
           file_name = Path.basename(item, ".yaml") |> String.to_atom
           file = YamlElixir.read_from_file(item)
+          |> IO.inspect()
           Keyword.put(acc, file_name, file)
         catch
-          x -> 
+          _ -> 
             IO.write :stderr, """
             The translation file #{IO.ANSI.red}\"#{item}\"#{IO.ANSI.reset} is not correctly formatted.
             
@@ -44,12 +45,29 @@ defmodule Orisons.Y18N.Parser do
       end)
   end
 
-  def get_translation(string), do: get_translation(string, get_language)
+  def get_translation(string), do: get_translation(string, get_language())
   def get_translation(string, lang) do
     case :ets.match(@ets_name, {lang, %{string => :"$2"}}) do
       [[translated]] when is_binary(translated) and byte_size(translated) > 0 -> translated
       _ -> string
     end
+  end
+
+  alias Orisons.Y18N.Plural
+
+  def get_translation_plural(string, string_plural, count) when is_integer(count), do: get_translation_plural(string, string_plural, count, get_language())
+  def get_translation_plural(string, string_plural, count, lang) do
+    case :ets.match(@ets_name, {lang, %{string => :"$2"}}) do
+      [[translated]] when is_map(translated) ->
+        nplural = Plural.get_plural(count, lang)
+        Map.get(translated, nplural, string)
+      _ -> 
+        case Plural.get_plural(count, :en) do
+          0 -> string
+          1 -> string_plural
+        end
+    end
+    |> String.replace("%d", Integer.to_string(count))
   end
 
   def get_language, do: Application.get_env(:y18n, :language)

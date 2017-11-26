@@ -1,1 +1,5 @@
-Hello World: Witaj świecie
+Hello world: Witaj świecie
+"%d apple":
+  0: "%d jabłko"
+  1: "%d jabłka"
+  2: "%d jabłek"
