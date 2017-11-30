@@ -6,8 +6,8 @@
 - [x] Store translations in ETS
 - [x] Get by function
 - [x] Support for Plug Session
-- [x] Plurals (WIP)
-- [ ] Generate YAML files schemas (WIP)
+- [x] Plurals
+- [x] Generate YAML files schemas
 - [ ] Tests
 - [ ] Documentation
 
