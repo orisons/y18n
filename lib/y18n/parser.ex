@@ -55,14 +55,14 @@ defmodule Orisons.Y18N.Parser do
 
   alias Orisons.Y18N.Plural
 
-  def get_translation_plural(string, string_plural, count) when is_integer(count), do: get_translation_plural(string, string_plural, count, get_language())
+  def get_translation_plural(string, string_plural, count), do: get_translation_plural(string, string_plural, count, get_language())
   def get_translation_plural(string, string_plural, count, lang) do
     case :ets.match(@ets_name, {lang, %{string => :"$2"}}) do
       [[translated]] when is_map(translated) ->
-        nplural = Plural.get_plural(count, lang)
+        nplural = Plural.get_plural_count(count, lang)
         Map.get(translated, nplural, string)
       _ -> 
-        case Plural.get_plural(count, :en) do
+        case Plural.get_plural_count(count, :en) do
           0 -> string
           1 -> string_plural
         end

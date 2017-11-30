@@ -8,11 +8,11 @@ defmodule Mix.Tasks.Y18N.Fetch do
     options = OptionParser.parse(args, switches: [lang: :string])
 
     {lang, paths} = case options do
-      {[lang: lang], paths, []} -> {lang, paths}
-      {[], paths, []} -> {nil, paths}
+      {[lang: lang], paths, []} -> {String.to_atom(lang), paths}
+      {[], paths, []} -> {:schema, paths}
     end
 
-    strings = parse(paths)
+    strings = parse(paths, lang)
     
     case lang do
       nil -> write("schema", strings)
@@ -20,22 +20,42 @@ defmodule Mix.Tasks.Y18N.Fetch do
     end
   end
 
-  defp parse(paths) do
+  defp parse(paths, lang) do
     Enum.reduce(paths, [], fn(x, acc) ->
       Enum.concat(Path.wildcard(x), acc)
     end)
     |> Enum.concat(Path.wildcard("lib/**/*.ex"))
-    |> Enum.reduce([], fn(path, acc) ->
+    |> Enum.reduce(Map.new, fn(path, acc) ->
       {:ok, file} = File.open(path, [:read])
-      to_translate = IO.read(file, :all) 
-        |> (&Regex.scan(~r/y\(\"([^\"]+)\"\)/, &1)).()
-        |> Enum.reduce([], fn(x, acc) -> 
-          [_, string] = x
-          [string | acc]
-        end)
-      Enum.concat(to_translate, acc)
+      content = IO.read(file, :all)
+
+      singular = singular(content)
+      plural = plural(content, lang)
+
+      Map.merge(singular, plural) |> Map.merge(acc)
     end)
-    |> Enum.uniq
+    # |> Enum.uniq
+  end
+
+  defp singular(content) do
+    Regex.scan(~r/y\(\"([^\"]+)\"\)/, content)
+    |> Enum.reduce(Map.new, fn(x, acc) -> 
+      [_, string] = x
+      Map.put(acc, string, 1)
+    end)
+  end
+
+  defp plural(content, lang) do
+    variants = case Orisons.Y18N.Plural.get_plural(lang) do
+      {:error, _} -> 2
+      module -> module.variants()
+    end
+
+    Regex.scan(~r/y\(\"([^\"]+)\",\s?\"([^\"]+)\",([^\)]+)\)/, content)
+    |> Enum.reduce(Map.new, fn(x, acc) -> 
+      [_, string, _, _] = x
+      Map.put(acc, string, variants)
+    end)    
   end
 
   defp merge(lang, strings) do
@@ -44,14 +64,22 @@ defmodule Mix.Tasks.Y18N.Fetch do
 
     path = Path.expand("priv/y18n/#{lang}.yaml")
     current_strings = YamlElixir.read_from_file(path)
-    
-    to_translate = Enum.filter(strings, fn(x) -> Map.has_key?(current_strings, x) == false end)
+
+    translated = Enum.filter(Map.keys(strings), fn(x) -> Map.has_key?(current_strings, x) == false end)
+    to_translate = Map.take(strings, translated)
     write(lang, to_translate, :append)
   end
 
   defp write(file, strings, mode \\ :write) do
     content = Enum.reduce(strings, "", fn(item, acc) ->
-      "#{item}: \n" <> acc
+      {string, variants} = item
+      case variants do
+        1 -> "\"#{string}\": \n" <> acc
+        count ->
+          Enum.reduce(0..count-1, "\"#{string}\": \n" <> acc, fn(item, acc) -> 
+            acc = acc <> "  " <> Integer.to_string(item) <> ": \n"
+          end)
+      end
     end)
 
     content = case mode do

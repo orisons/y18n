@@ -9,4 +9,8 @@ defmodule Orisons.Y18N.Plural.Pl do
     end
   end
 
+  def variants do
+    3
+  end
+
 end
