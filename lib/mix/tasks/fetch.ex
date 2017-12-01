@@ -29,33 +29,25 @@ defmodule Mix.Tasks.Y18N.Fetch do
       {:ok, file} = File.open(path, [:read])
       content = IO.read(file, :all)
 
-      singular = singular(content)
-      plural = plural(content, lang)
+      detected = detect(content, lang)
 
-      Map.merge(singular, plural) |> Map.merge(acc)
-    end)
-    # |> Enum.uniq
-  end
-
-  defp singular(content) do
-    Regex.scan(~r/y\(\"([^\"]+)\"\)/, content)
-    |> Enum.reduce(Map.new, fn(x, acc) -> 
-      [_, string] = x
-      Map.put(acc, string, 1)
+      Map.merge(detected, acc)
     end)
   end
 
-  defp plural(content, lang) do
+  defp detect(content, lang) do
     variants = case Orisons.Y18N.Plural.get_plural(lang) do
       {:error, _} -> 2
       module -> module.variants()
     end
 
-    Regex.scan(~r/y\(\"([^\"]+)\",\s?\"([^\"]+)\",([^\)]+)\)/, content)
+    Regex.scan(~r/y\(\"([^\"]+)\"(,\s?\"([^\"]+)\",([^\)]+))?\)/, content)
     |> Enum.reduce(Map.new, fn(x, acc) -> 
-      [_, string, _, _] = x
-      Map.put(acc, string, variants)
-    end)    
+      case x do
+        [_, string] -> Map.put(acc, string, 1)
+        [_, string, _, _, _] -> Map.put(acc, string, variants)
+      end
+    end)
   end
 
   defp merge(lang, strings) do
