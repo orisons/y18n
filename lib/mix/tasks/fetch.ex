@@ -1,9 +1,24 @@
-defmodule Mix.Tasks.Y18N.Fetch do
+defmodule Mix.Tasks.Y18n.Fetch do
+  @moduledoc """
+  Mix task to genereate `.yaml` file based on project files and functions `y/1`, `y/3`
+  """
+
   use Mix.Task
 
   # Mix.Task.run("Y18N.Fetch", ["priv/templates/**/*.eex"])
 
   # @spec run(args) :: boolean()
+  @doc """
+  Generate `.yaml` file based on project files and functions `y/1`, `y/3`.
+  
+  Default create `schema.yaml` file and save in `priv/y18n`.
+
+  ## Parameters
+  `mix y18n.fetch --lang="pl"` Create yaml file for specific language.
+
+  `mix y18n.fetch "priv/templates/**/*.eex"` Add directory to detect `y/1`, `y/3` functions.
+
+  """
   def run(args) do
     options = OptionParser.parse(args, switches: [lang: :string])
 
@@ -38,7 +53,7 @@ defmodule Mix.Tasks.Y18N.Fetch do
   defp detect(content, lang) do
     variants = case Orisons.Y18N.Plural.get_plural(lang) do
       {:error, _} -> 2
-      module -> module.variants()
+      {:ok, module} -> module.variants()
     end
 
     Regex.scan(~r/y\(\"([^\"]+)\"(,\s?\"([^\"]+)\",([^\)]+))?\)/, content)
@@ -68,8 +83,8 @@ defmodule Mix.Tasks.Y18N.Fetch do
       case variants do
         1 -> "\"#{string}\": \n" <> acc
         count ->
-          Enum.reduce(0..count-1, "\"#{string}\": \n" <> acc, fn(item, acc) -> 
-            acc = acc <> "  " <> Integer.to_string(item) <> ": \n"
+          Enum.reduce(0..count-1, "\"#{string}\": \n" <> acc, fn(index, acc) -> 
+            acc = acc <> "  " <> << Enum.at(?a..?z, index) :: utf8 >> <> ": \n"
           end)
       end
     end)

@@ -8,7 +8,7 @@
 - [x] Support for Plug Session
 - [x] Plurals
 - [x] Generate YAML files schemas
-- [ ] Tests
+- [x] Tests
 - [ ] Documentation
 
 Documentation will be available after release in hex.pm

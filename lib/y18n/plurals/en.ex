@@ -3,8 +3,8 @@ defmodule Orisons.Y18N.Plural.En do
 
   def check(count) do
     case abs(count) do
-      n when n == 1 -> 0
-      n when n != 1 -> 1
+      n when n == 1 -> "a"
+      n when n != 1 -> "b"
     end
   end
 

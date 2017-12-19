@@ -2,6 +2,10 @@ defmodule Orisons.Y18N.Parser do
   use GenServer
 
   defmodule PlugException do
+    @moduledoc """
+    Exception raised when trying use `Orisons.Plug` without `plug` dependency.
+    """
+
     defexception message: "Module 'Plug.Conn' is not available, check 'plug' is in deps."
   end
 
@@ -25,7 +29,6 @@ defmodule Orisons.Y18N.Parser do
         try do
           file_name = Path.basename(item, ".yaml") |> String.to_atom
           file = YamlElixir.read_from_file(item)
-          |> IO.inspect()
           Keyword.put(acc, file_name, file)
         catch
           _ -> 
