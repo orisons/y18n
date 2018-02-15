@@ -3,10 +3,8 @@ defmodule Orisons.Y18N.App do
   use Application
 
   def start(_type, _args) do
-    import Supervisor.Spec
-
-    {:ok, pid} = Supervisor.start_link([
-      {Orisons.Y18N.Parser, [:hello]}
+    {:ok, _} = Supervisor.start_link([
+      {Orisons.Y18N.Parser, []}
     ], strategy: :one_for_one)
   end
 

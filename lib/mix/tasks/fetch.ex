@@ -84,7 +84,7 @@ defmodule Mix.Tasks.Y18n.Fetch do
         1 -> "\"#{string}\": \n" <> acc
         count ->
           Enum.reduce(0..count-1, "\"#{string}\": \n" <> acc, fn(index, acc) -> 
-            acc = acc <> "  " <> << Enum.at(?a..?z, index) :: utf8 >> <> ": \n"
+            acc <> "  " <> << Enum.at(?a..?z, index) :: utf8 >> <> ": \n"
           end)
       end
     end)
