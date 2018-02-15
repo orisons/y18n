@@ -6,13 +6,12 @@ defmodule Orisons.Y18N.Mixfile do
       app: :y18n,
       version: "0.1.0",
       elixir: "~> 1.4",
-      start_permanent: Mix.env == :prod,
       deps: deps(),
       name: "Y18N",
       source_url: "https://github.com/orisons/y18n",
       homepage_url: "https://orisons.io",
       docs: [main: "README", # The main page in the docs
-              # logo: "path/to/logo.png",
+              # logo: "logo.png",
               extras: ["README.md"]]
     ]
   end
