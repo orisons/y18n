@@ -1,4 +1,8 @@
 defmodule Orisons.Y18N.Parser do
+  @moduledoc """
+  Module parse `.yaml` files and store translations in `ets` table, also contain functions to get translations from same `ets` table.
+  """
+
   use GenServer
 
   defmodule PlugException do
@@ -12,11 +16,13 @@ defmodule Orisons.Y18N.Parser do
   @ets_name :orisons_y18n_parser
   @session_name :orisons_y18n_session
 
-  def start_link(state) do
+  @doc false
+  def start_link(_state) do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
-  def init(langs) do
+  @doc false
+  def init(_) do
     table = :ets.new(@ets_name, [:set, :protected, :named_table])
     :ets.insert(@ets_name, get_all_langs())
     {:ok, table}
@@ -47,7 +53,14 @@ defmodule Orisons.Y18N.Parser do
       end)
   end
 
+  @doc """
+  Get translation of string in language specified in config
+  """
   def get_translation(string), do: get_translation(string, get_language())
+
+  @doc """
+  Get translation of string in specific language
+  """
   def get_translation(string, lang) do
     case :ets.match(@ets_name, {lang, %{string => :"$2"}}) do
       [[translated]] when is_binary(translated) and byte_size(translated) > 0 -> translated
@@ -72,7 +85,14 @@ defmodule Orisons.Y18N.Parser do
     |> String.replace("%d", Integer.to_string(count))
   end
 
+  @doc """
+  Get current language from application config
+  """
   def get_language, do: Application.get_env(:y18n, :language)
+
+  @doc """
+  Get current language from `Plug.Conn` session with key `:orisons_y18n_session`
+  """
   def get_language(conn) do
     case Code.ensure_loaded(Plug.Conn) do
       {:module, module} ->
