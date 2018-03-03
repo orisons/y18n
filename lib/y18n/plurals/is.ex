@@ -1,10 +1,10 @@
-defmodule Orisons.Y18N.Plural.En do
+defmodule Orisons.Y18N.Plural.Is do
   @behaviour Orisons.Y18N.Plural
 
   def check(count) do
     case abs(count) do
-      n when n == 1 -> "a"
-      n when n != 1 -> "b"
+      n when rem(n, 10) != 1 or rem(n, 100) == 11 -> "a"
+      _ -> "b"
     end
   end
 
