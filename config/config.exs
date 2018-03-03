@@ -1,4 +1,3 @@
 use Mix.Config
 
-config :y18n,
-  language: :pl
+config :y18n, language: :pl

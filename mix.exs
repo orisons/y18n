@@ -10,9 +10,12 @@ defmodule Orisons.Y18N.Mixfile do
       name: "Y18N",
       source_url: "https://github.com/orisons/y18n",
       homepage_url: "https://orisons.io",
-      docs: [main: "README", # The main page in the docs
-              # logo: "logo.png",
-              extras: ["README.md"]]
+      # The main page in the docs
+      docs: [
+        main: "README",
+        # logo: "logo.png",
+        extras: ["README.md"]
+      ]
     ]
   end
 
