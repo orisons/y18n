@@ -27,30 +27,31 @@ defmodule Orisons.Y18N.Parser do
     :ets.insert(@ets_name, get_all_langs())
     {:ok, table}
   end
-  
+
   defp get_all_langs do
     Path.wildcard("priv/y18n/*.yaml")
-      |> Enum.reduce([], fn(item, acc) ->
-        try do
-          file_name = Path.basename(item, ".yaml") |> String.to_atom
-          file = YamlElixir.read_from_file(item)
-          Keyword.put(acc, file_name, file)
-        catch
-          _ -> 
-            IO.write :stderr, """
-            The translation file #{IO.ANSI.red}\"#{item}\"#{IO.ANSI.reset} is not correctly formatted.
-            
-            Example:
-            Original: Translation
-            #{IO.ANSI.green}Hello world: Witaj świecie#{IO.ANSI.reset}
-            #{IO.ANSI.red}Example#{IO.ANSI.reset}
-            #{IO.ANSI.green}'Some (info)': 'Pewna (informacja)'#{IO.ANSI.reset}
-            #{IO.ANSI.red}Some (info): Pewna (informacja)#{IO.ANSI.reset}
-            
-            """
-            acc
-        end
-      end)
+    |> Enum.reduce([], fn item, acc ->
+      try do
+        file_name = Path.basename(item, ".yaml") |> String.to_atom()
+        file = YamlElixir.read_from_file(item)
+        Keyword.put(acc, file_name, file)
+      catch
+        _ ->
+          IO.write(:stderr, """
+          The translation file #{IO.ANSI.red()}\"#{item}\"#{IO.ANSI.reset()} is not correctly formatted.
+
+          Example:
+          Original: Translation
+          #{IO.ANSI.green()}Hello world: Witaj świecie#{IO.ANSI.reset()}
+          #{IO.ANSI.red()}Example#{IO.ANSI.reset()}
+          #{IO.ANSI.green()}'Some (info)': 'Pewna (informacja)'#{IO.ANSI.reset()}
+          #{IO.ANSI.red()}Some (info): Pewna (informacja)#{IO.ANSI.reset()}
+
+          """)
+
+          acc
+      end
+    end)
   end
 
   @doc """
@@ -70,13 +71,22 @@ defmodule Orisons.Y18N.Parser do
 
   alias Orisons.Y18N.Plural
 
-  def get_translation_plural(string, string_plural, count), do: get_translation_plural(string, string_plural, count, get_language())
+  @doc """
+  Get plural translation of string in language specified in config
+  """
+  def get_translation_plural(string, string_plural, count),
+    do: get_translation_plural(string, string_plural, count, get_language())
+
+  @doc """
+  Get plural translation of string in specific language
+  """
   def get_translation_plural(string, string_plural, count, lang) do
     case :ets.match(@ets_name, {lang, %{string => :"$2"}}) do
       [[translated]] when is_map(translated) ->
         nplural = Plural.get_plural_count(count, lang)
         Map.get(translated, nplural, string)
-      _ -> 
+
+      _ ->
         case Plural.get_plural_count(count, :en) do
           0 -> string
           1 -> string_plural
@@ -100,7 +110,9 @@ defmodule Orisons.Y18N.Parser do
           nil -> Application.get_env(:y18n, :language)
           lang -> lang
         end
-      {:error, :nofile} -> raise PlugException
+
+      {:error, :nofile} ->
+        raise PlugException
     end
   end
 
@@ -114,5 +126,4 @@ defmodule Orisons.Y18N.Parser do
       false -> {:reply, {:error}, message}
     end
   end
-
 end
