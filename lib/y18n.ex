@@ -36,4 +36,28 @@ defmodule Orisons.Y18N do
   def y(string, string_plural, count) do
     Parser.get_translation_plural(string, string_plural, count)
   end
+
+  @doc """
+  Translate string from parameter to language from session stored in `Plug.Conn`.
+
+  ## Examples
+      iex> Orisons.Y18N.y("Hello world")
+      "Witaj świecie"
+  """
+  @spec y(Plug.Conn.t(), String.t()) :: String.t()
+  def y(conn, string) do
+    Parser.get_translation(string, Parser.get_language(conn))
+  end
+
+  @doc """
+  Translate string from parameter to language from session stored in `Plug.Conn`, with plural detection.
+
+  ## Examples
+      iex> Orisons.Y18N.y("%d apple", "%d apples", 3)
+      "3 jabłka"
+  """
+  @spec y(Plug.Conn.t(), String.t(), String.t(), number) :: String.t()
+  def y(conn, string, string_plural, count) do
+    Parser.get_translation_plural(string, string_plural, count, Parser.get_language(conn))
+  end
 end
