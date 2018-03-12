@@ -27,6 +27,6 @@ you can add modules with behaviour `Orisons.Y18N.Plural`.
 
 ```elixir
 custom_plurals: [
-    languange_key: YourApp.LanguageModule
+    language_key: YourApp.LanguageModule
   ]
 ```
