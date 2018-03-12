@@ -1,6 +1,5 @@
 defmodule Orisons.Y18NTest do
   use ExUnit.Case
-  doctest Orisons.Y18N
 
   import Orisons.Y18N
 
