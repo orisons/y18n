@@ -41,7 +41,7 @@ defmodule Orisons.Y18N do
   Translate string from parameter to language from session stored in `Plug.Conn`.
 
   ## Examples
-      iex> Orisons.Y18N.y("Hello world")
+      iex> Orisons.Y18N.y(conn, "Hello world")
       "Witaj świecie"
   """
   @spec y(Plug.Conn.t(), String.t()) :: String.t()
@@ -53,7 +53,7 @@ defmodule Orisons.Y18N do
   Translate string from parameter to language from session stored in `Plug.Conn`, with plural detection.
 
   ## Examples
-      iex> Orisons.Y18N.y("%d apple", "%d apples", 3)
+      iex> Orisons.Y18N.y(conn, "%d apple", "%d apples", 3)
       "3 jabłka"
   """
   @spec y(Plug.Conn.t(), String.t(), String.t(), number) :: String.t()

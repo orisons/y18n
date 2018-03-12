@@ -7,7 +7,7 @@ defmodule Orisons.Y18N.Parser do
 
   defmodule PlugException do
     @moduledoc """
-    Exception raised when trying use `Orisons.Plug` without `plug` dependency.
+    Exception raised when trying use `y/2` or `y/4` without `plug` dependency.
     """
 
     defexception message: "Module 'Plug.Conn' is not available, check 'plug' is in deps."
@@ -88,8 +88,8 @@ defmodule Orisons.Y18N.Parser do
 
       _ ->
         case Plural.get_plural_count(count, :en) do
-          0 -> string
-          1 -> string_plural
+          "a" -> string
+          "b" -> string_plural
         end
     end
     |> String.replace("%d", Integer.to_string(count))
