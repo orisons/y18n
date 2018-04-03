@@ -1,3 +1,5 @@
+<a href="https://travis-ci.org/orisons/y18n"><img src="https://travis-ci.org/orisons/y18n.svg?branch=master" /></a>
+
 # Readme
 
 **Internationalization library based on YAML files.**
