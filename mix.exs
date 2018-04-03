@@ -36,7 +36,8 @@ defmodule Orisons.Y18N.Mixfile do
     [
       {:yaml_elixir, "~> 1.3"},
       {:earmark, "~> 1.2", only: :dev, runtime: false},
-      {:ex_doc, "~> 0.18", only: :dev, runtime: false}
+      {:ex_doc, "~> 0.18", only: :dev, runtime: false},
+      {:inch_ex, "~> 0.5", only: :docs}
     ]
   end
 
