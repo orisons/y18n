@@ -17,7 +17,7 @@ defmodule Orisons.Y18N.Parser do
   @session_name :orisons_y18n_session
 
   @doc false
-  def start_link(_state) do
+  def start_link() do
     GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
