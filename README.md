@@ -1,14 +1,27 @@
-# Orisons.Y18N
+# Readme
 
-**In development**
+**Internationalization library based on YAML files.**
 
-- [x] Parsing YAML files
-- [x] Store translations in ETS
-- [x] Get by function
-- [x] Support for Plug Session
-- [x] Plurals
-- [x] Generate YAML files schemas
-- [x] Tests
-- [ ] Documentation
+## Installation
 
-Documentation will be available after release in hex.pm
+Add `y18n` as dependency in `mix.exs`
+```elixir
+[{:y18n, "~> 1.0"}]
+```
+
+## Basic usage
+
+Use translation functions `y/1` or `y/3`
+```elixir
+iex> y("Hello world") # Singular
+"Witaj świecie"
+iex> y("%d apple", "%d apples", 3) # Plural
+"3 jabłka"
+```
+**To use with Plug or Phoenix framework go <a href="/y18n/integration.html">here</a>**
+
+## Generate YAML file
+```elixir
+mix y18n.fetch
+```
+Translation files will be available in `priv/y18n/`. More info <a href="/y18n/Mix.Tasks.Y18n.Fetch.html">here</a>
